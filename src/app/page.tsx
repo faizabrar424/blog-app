@@ -1,65 +1,44 @@
-import Image from "next/image";
+import PostDeleteButton from "@/components/PostDeleteButton";
+import { IPost } from "@/server/model/Post";
+import { cookies } from "next/headers";
+import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const _id = cookieStore.get("_id");
+  const resp = await fetch("http://localhost:3000/api/posts");
+  const posts: IPost[] = await resp.json();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="max-w-300 mx-auto py-12 px-5 text-center">
+      <section>
+        <h1 className="text-5xl font-bold text-[#333] mb-4">Welcome to Post Page</h1>
+        <p className="text-xl text-[#666] mb-12 max-w-150 mx-auto">Professional web developer and designer creating beautiful, responsive websites and applications.</p>
+        <article className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-8 mt-16">
+          {posts.map((post) => (
+            <div key={post._id.toString()} className="bg-white p-8 rounded-lg shadow-md transition-shadow duration-300 ease-in-out hover:shadow-xl">
+              <h2 className="text-brand-blue text-2xl font-bold mb-4">{/*Title: */} {post.title}</h2>
+              <p className="text-[#666] leading-relaxed">{/*Content: */}  {post.content}</p>
+              <p>
+                Tag:{" "}
+                {post.tags.map((tag, index) => (
+                  <label key={`${tag}-${index}`}>{tag}, </label>
+                ))}
+              </p>
+              <p>Created by {post.user?.name}</p>
+              <Link href={`/post/${post._id.toString()}`}>Detail</Link>
+              {_id?.value === post.userId?.toString() && (
+                <>
+                  {" "}
+                  | <Link href={`/post/${post._id.toString()}/edit`}>Edit</Link> |{" "}
+                  <PostDeleteButton postId={post._id.toString()} />
+                </>
+              )}
+              {/* <hr /> */}
+            </div>
+          ))}
+        </article>
+      </section>
+    </main>
   );
 }
