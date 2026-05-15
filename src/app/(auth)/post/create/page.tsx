@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import Swal from "sweetalert2";
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 
 interface IPostInput {
   title: string;
@@ -13,9 +13,9 @@ interface IPostInput {
 
 export default function CreatePostPage() {
   const [input, setInput] = useState<IPostInput>({
-    title: "",
-    content: "",
-    tag: "",
+    title: '',
+    content: '',
+    tag: '',
     tags: [],
   });
 
@@ -35,17 +35,24 @@ export default function CreatePostPage() {
     setInput({
       ...input,
       tags: [...input.tags, input.tag],
-      tag: "",
+      tag: '',
+    });
+  };
+
+  const handleRemoveTag = (index: number) => {
+    setInput({
+      ...input,
+      tags: input.tags.filter((_, i) => i !== index),
     });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const resp = await fetch("/api/posts", {
-      method: "POST",
+    const resp = await fetch('/api/posts', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         title: input.title,
@@ -61,35 +68,92 @@ export default function CreatePostPage() {
         title: data.message,
       });
     } else {
-      router.push("/");
+      router.push('/');
     }
   };
 
   return (
-    <div>
-      <h1>CreatePostPage</h1>
-      <pre>{JSON.stringify(input, null, 2)}</pre>
-      <form action="" onSubmit={handleSubmit}>
-        <label htmlFor="">Title</label>
-        <input name="title" value={input.title} type="text" onChange={handleChange} />
-        <br />
-        <label htmlFor="">Content</label>
-        <textarea name="content" value={input.content} id="" onChange={handleChange}></textarea>
-        <br />
-        <label htmlFor="">Tag</label>
-        <input name="tag" value={input.tag} type="text" onChange={handleChange} />
-        <button type="button" onClick={handleAdd}>
-          Add
-        </button>
-        <ul>
-          {/* {input.tags.map((el, i) => <li key={i}>{el}</li>)} */}
-          {input.tags.map((tag) => (
-            <li key={tag}>{tag}</li>
-          ))}
-        </ul>
-        <br />
-        <input type="submit" value={"Create"} />
-      </form>
+    <div className="min-h-screen px-4 py-12">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl mx-auto overflow-hidden">
+        <div className="h-2 bg-brand-blue" />
+        <div className="p-10">
+          <h1 className="text-3xl font-bold text-brand-blue mb-2">Create Post</h1>
+          <p className="text-[#666] mb-8">Tulis postingan baru</p>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-[#333]">Title</label>
+              <input
+                name="title"
+                type="text"
+                value={input.title}
+                onChange={handleChange}
+                placeholder="Judul postingan"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 text-[#333] outline-none focus:border-brand-blue transition-colors"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-[#333]">Content</label>
+              <textarea
+                name="content"
+                value={input.content}
+                onChange={handleChange}
+                placeholder="Isi postingan..."
+                rows={6}
+                className="border border-gray-200 rounded-lg px-4 py-2.5 text-[#333] outline-none focus:border-brand-blue transition-colors resize-none"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-[#333]">Tag</label>
+              <div className="flex gap-2">
+                <input
+                  name="tag"
+                  type="text"
+                  value={input.tag}
+                  onChange={handleChange}
+                  placeholder="Tambah tag..."
+                  className="flex-1 border border-gray-200 rounded-lg px-4 py-2.5 text-[#333] outline-none focus:border-brand-blue transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={handleAdd}
+                  className="bg-brand-blue text-white px-4 py-2.5 rounded-lg hover:bg-[#1a4a7a] transition-colors duration-200"
+                >
+                  Add
+                </button>
+              </div>
+              {input.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {input.tags.map((tag, index) => (
+                    <span
+                      key={`${tag}-${index}`}
+                      className="bg-[#F1EFEC] text-brand-blue text-sm px-3 py-1 rounded-full flex items-center gap-1"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTag(index)}
+                        className="text-[#666] hover:text-red-500 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="bg-brand-blue text-white font-semibold py-2.5 rounded-lg hover:bg-[#1a4a7a] transition-colors duration-200 mt-2"
+            >
+              Create Post
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
