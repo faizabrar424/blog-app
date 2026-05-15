@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const token = cookieStore.get("access_token");
     // console.log(token, "<<<<<<<<<<<");
     // return NextResponse.json({ message: "test" }); // untuk mentest header token lewat postman
-    if (!token) return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+    if (!token) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const validation = postSchema.safeParse(body);
     if (!validation.success) {
@@ -58,6 +58,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Post berhasil dibuat" }, { status: 201 });
   } catch (err) {
     console.log(err, "<<<<");
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
-  return NextResponse.json({ message: "Internal server error" }, { status: 500 });
 }
