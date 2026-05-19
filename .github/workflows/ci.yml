@@ -49,3 +49,12 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
+
+  deploy:
+    needs: docker
+    runs-on: self-hosted
+    steps:
+      - name: Run Ansible playbook
+        run: |
+          cd ~/ansible-lab
+          ansible-playbook -i inventory/hosts.ini playbook.yml       
