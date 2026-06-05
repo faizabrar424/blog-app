@@ -37,7 +37,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy:
-    needs: docker
+    needs: build-push
     runs-on: self-hosted
     steps:
       - name: Run Ansible playbook
