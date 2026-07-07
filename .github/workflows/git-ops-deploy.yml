@@ -45,7 +45,8 @@ jobs:
           git clone https://x-access-token:${GITOPS_TOKEN}@github.com/faizabrar424/blog-app-gitops.git
           cd blog-app-gitops
 
-          sed -i "s|image: ghcr.io/faizabrar424/blog-app:.*|image: ghcr.io/faizabrar424/blog-app:${{ steps.tag.outputs.tag }}|" blog-app/deployment.yaml
+          sed -i "s|image:.*|image: ghcr.io/faizabrar424/blog-app:${{ steps.tag.outputs.tag }}|" blog-app/deployment.yaml
+          sed -i "s|imagePullPolicy:.*|imagePullPolicy: IfNotPresent|" blog-app/deployment.yaml
 
           git config user.email "ci@github.com"
           git config user.name "GitHub CI"
