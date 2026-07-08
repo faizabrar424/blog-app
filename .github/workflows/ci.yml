@@ -3,6 +3,10 @@ name: CI Pipeline - Blog App
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '.github/workflows/**'
+      - '*.md'
+      - '.gitignore'
   pull_request:
     branches: [ main ]
 
