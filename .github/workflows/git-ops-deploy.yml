@@ -48,7 +48,7 @@ jobs:
           sed -i "s|image:.*|image: ghcr.io/faizabrar424/blog-app:${{ steps.tag.outputs.tag }}|" blog-app/deployment.yaml
           sed -i "s|imagePullPolicy:.*|imagePullPolicy: IfNotPresent|" blog-app/deployment.yaml
 
-          git config user.email "ci@github.com"
-          git config user.name "GitHub CI"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
           git commit -am "Deploy blog-app ${{ steps.tag.outputs.tag }}"
           git push
